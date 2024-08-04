@@ -1,0 +1,17 @@
+{
+  "environment": "development",
+  "default": {
+    "port": 3000,
+    "jwtSecret": "default_jwt_secret",
+    "mongoURI": "mongodb+srv://angads:dSGL4cxq8jged43P@cluster0.g2s82yy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+  },
+  "development": {
+    "mongoURI": "mongodb+srv://angads:dSGL4cxq8jged43P@cluster0.g2s82yy.mongodb.net/development?retryWrites=true&w=majority&appName=Cluster0",
+    "jwtSecret": "development_jwt_secret"
+  },
+  "production": {
+    "port": 80,
+    "mongoURI": "mongodb+srv://angads:dSGL4cxq8jged43P@cluster0.g2s82yy.mongodb.net/production?retryWrites=true&w=majority&appName=Cluster0",
+    "jwtSecret": "production_jwt_secret"
+  }
+}
