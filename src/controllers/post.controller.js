@@ -8,12 +8,17 @@ const {
 const mongoose = require("mongoose");
 
 exports.createPost = async (req, res) => {
-  const { title, content } = req.body;
+  const { title, content, authorId } = req.body;
+  if (authorId != req.user.userId) {
+    clientError(res, {
+      message: "authenticated user and authorId doesn't match",
+    });
+  }
   try {
     const post = new Post({
       title,
       content,
-      authorId: "66af90c9003e264bc1f107d3",
+      authorId: authorId,
     });
     await post.save();
     success(res, {
@@ -49,4 +54,3 @@ exports.getAllPosts = async (req, res) => {
     serverError(res, err);
   }
 };
-

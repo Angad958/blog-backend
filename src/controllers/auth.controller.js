@@ -13,11 +13,15 @@ const {
 exports.signup = async (req, res) => {
   const { email, password } = req.body;
   try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return clientError(res, "User already exists with this email.");
+    }
     const passwordHash = await bcrypt.hash(password, 10);
     const user = new User({ email, passwordHash });
     await user.save();
     success(res, {
-      message: "user signed up successfully.",
+      message: "User signed up successfully.",
     });
   } catch (err) {
     serverError(res, err);
@@ -26,17 +30,26 @@ exports.signup = async (req, res) => {
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
+
   try {
     const user = await User.findOne({ email });
     if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
-      return clientError(res, "Invalid credentials");
+      return clientError(res, "Invalid email or password.");
     }
+
     const token = jwt.sign({ userId: user._id }, settings.jwtSecret, {
-      expiresIn: "1h",
+      expiresIn: "7d",
     });
+
+    res.cookie("idToken", token, {
+      secure: true,
+      sameSite: "Strict", // CSRF protection
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
     success(res, {
-      message: "user logged in successfully.",
-      idToken: token,
+      message: "User logged in successfully.",
+      authorId: user._id,
     });
   } catch (err) {
     serverError(res, err);
